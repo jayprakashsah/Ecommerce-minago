@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaMapMarkerAlt, FaCreditCard, FaMoneyBillWave, FaTruck, FaShieldAlt, FaEdit } from 'react-icons/fa';
+const API = import.meta.env.VITE_API_URL;
 
 function Checkout({ cart }) {
   const location = useLocation();

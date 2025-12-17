@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { FaStore, FaIdCard, FaFileUpload, FaUser, FaEnvelope, FaLock, FaMapMarkerAlt, FaPhone } from 'react-icons/fa';
+const API = import.meta.env.VITE_API_URL;
 
 function RegisterSeller() {
   const navigate = useNavigate();

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
+const API = import.meta.env.VITE_API_URL;
 
 function Home({ topProducts, onAddToCart }) {
   return (

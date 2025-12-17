@@ -1,5 +1,6 @@
 import React from 'react';
 import AddProductForm from '../components/AddProductForm';
+const API = import.meta.env.VITE_API_URL;
 
 function Admin({ onAddProduct }) {
   return (
