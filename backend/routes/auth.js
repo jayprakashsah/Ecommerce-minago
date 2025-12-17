@@ -5,41 +5,53 @@ const adminController = require('../controllers/adminController');
 const verifyToken = require('../middlewares/authMiddleware');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
+
+// ✅ ENSURE UPLOADS FOLDER EXISTS
+const uploadDir = 'uploads';
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir);
+}
 
 // --- MULTER SETUP ---
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/'); 
+        cb(null, uploadDir);
     },
     filename: (req, file, cb) => {
         cb(null, 'file-' + Date.now() + path.extname(file.originalname));
     }
 });
-const upload = multer({ storage: storage });
+
+const upload = multer({ storage });
 
 // --- ROUTES ---
 
 // 1. Auth Routes
 router.post('/register', authController.register);
 router.post('/login', authController.login);
-router.post('/social-login', authController.socialLogin); // <--- SOCIAL LOGIN
+router.post('/social-login', authController.socialLogin);
 
-// 2. Seller Registration Route (Public)
-// uses 'document' field for the ID proof upload
-router.post('/register-seller', upload.single('document'), authController.registerSeller); // <--- SELLER REGISTRATION
+// 2. Seller Registration Route
+router.post(
+    '/register-seller',
+    upload.single('document'),
+    authController.registerSeller
+);
 
-// 3. Profile Routes (Protected)
+// 3. Profile Routes
 router.get('/profile', verifyToken, authController.getProfile);
-router.put('/profile', 
-    verifyToken, 
-    upload.single('profileImage'), 
+router.put(
+    '/profile',
+    verifyToken,
+    upload.single('profileImage'),
     authController.updateProfile
 );
 
-// 4. ADMIN ROUTES (Protected)
+// 4. Admin Routes
 router.get('/admin/stats', verifyToken, adminController.getStats);
-router.get('/admin/seller-requests', verifyToken, adminController.getSellerRequests); // <--- VIEW REQUESTS
-router.put('/admin/approve-seller/:id', verifyToken, adminController.approveSeller);  // <--- APPROVE
-router.delete('/admin/reject-seller/:id', verifyToken, adminController.rejectSeller); // <--- REJECT
+router.get('/admin/seller-requests', verifyToken, adminController.getSellerRequests);
+router.put('/admin/approve-seller/:id', verifyToken, adminController.approveSeller);
+router.delete('/admin/reject-seller/:id', verifyToken, adminController.rejectSeller);
 
 module.exports = router;
