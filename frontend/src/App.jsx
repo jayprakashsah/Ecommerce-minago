@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-// Import Components
+// Components
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import ProductCard from './components/ProductCard';
 import Cart from './components/Cart';
 
-// Import Pages
+// Pages
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Orders from './pages/Orders';
@@ -19,7 +19,7 @@ import Checkout from './pages/Checkout';
 import PaymentGateway from './pages/PaymentGateway';
 import RegisterSeller from './pages/RegisterSeller';
 
-// ✅ BACKEND API URL (FROM .env)
+// 🔗 BACKEND API URL
 const API = import.meta.env.VITE_API_URL;
 
 function App() {
@@ -31,8 +31,13 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userRole, setUserRole] = useState(null);
 
-  // --- FETCH DATA ---
+  // --- INITIAL LOAD ---
   useEffect(() => {
+    if (!API) {
+      console.error("❌ VITE_API_URL is NOT defined. Backend not connected.");
+      return;
+    }
+
     fetchProducts();
 
     const token = sessionStorage.getItem("token");
@@ -51,7 +56,7 @@ function App() {
       const res = await axios.get(`${API}/products`);
       setProducts(res.data);
     } catch (err) {
-      console.error("Error loading products:", err);
+      console.error("❌ Error loading products:", err?.response || err);
     }
   };
 
@@ -62,7 +67,7 @@ function App() {
       });
       setCart(res.data);
     } catch (err) {
-      console.error("Error loading cart:", err);
+      console.error("❌ Error loading cart:", err?.response || err);
     }
   };
 
@@ -95,8 +100,8 @@ function App() {
       });
       setCart(res.data);
       alert("Added to Cart!");
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error("❌ Add to cart failed:", err?.response || err);
     }
   };
 
@@ -112,8 +117,8 @@ function App() {
         { headers: { Authorization: token } }
       );
       setCart(res.data);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error("❌ Update quantity failed:", err?.response || err);
     }
   };
 
@@ -124,8 +129,8 @@ function App() {
         headers: { Authorization: token }
       });
       setCart(res.data);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error("❌ Remove item failed:", err?.response || err);
     }
   };
 
@@ -140,7 +145,6 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home topProducts={products.slice(0, 3)} onAddToCart={addToCart} />} />
-
         <Route path="/register-seller" element={<RegisterSeller />} />
 
         <Route
@@ -149,7 +153,7 @@ function App() {
             <div className="container mx-auto px-6 mt-10 mb-20">
               <h2 className="text-3xl font-bold mb-8">All Products</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-                {products.map((prod) => (
+                {products.map(prod => (
                   <ProductCard
                     key={prod._id}
                     product={prod}
@@ -203,11 +207,8 @@ function App() {
         />
 
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
-
         <Route path="/orders" element={<ProtectedRoute><Orders /></ProtectedRoute>} />
-
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-
         <Route
           path="/admin"
           element={
