@@ -48,8 +48,8 @@ function AdminDashboard() {
     try {
       // DYNAMIC URL: Admin gets global stats, Seller gets isolated stats
       const url = role === 'admin' 
-        ? '${API}/auth/admin/stats'
-        : '${API}/auth/seller/stats';
+  ? `${API}/auth/admin/stats`
+  : `${API}/auth/seller/stats`;
 
       const res = await axios.get(url, { headers: { Authorization: token } });
       setStats(res.data);
@@ -63,23 +63,40 @@ function AdminDashboard() {
   };
 
   const fetchProducts = async () => {
-    try {
-      // DYNAMIC URL: Admin sees all, Seller sees theirs
-      const endpoint = role === 'admin' 
-        ? '${API}/products' 
-        : '${API}/products/seller/my-products';
-        
-      const res = await axios.get(endpoint, { headers: { Authorization: token } });
-      setProducts(res.data);
-    } catch (err) { console.error(err); }
-  };
+  try {
+    const endpoint = role === 'admin'
+      ? `${API}/products`
+      : `${API}/products/seller/my-products`;
+
+    const res = await axios.get(endpoint, {
+      headers: { Authorization: token }
+    });
+
+    const data = res.data;
+
+    // ✅ PREVENT map() crash
+    setProducts(Array.isArray(data) ? data : data.products || []);
+  } catch (err) {
+    console.error("Fetch products error:", err);
+    setProducts([]);
+  }
+};
 
   const fetchRequests = async () => {
-    try {
-      const res = await axios.get('${API}/auth/admin/seller-requests', { headers: { Authorization: token } });
-      setRequests(res.data);
-    } catch (err) { console.error("Requests error", err); }
-  };
+  try {
+    const res = await axios.get(`${API}/auth/admin/seller-requests`, {
+      headers: { Authorization: token }
+    });
+
+    const data = res.data;
+
+    // ✅ ENSURE ARRAY – prevents map() crash
+    setRequests(Array.isArray(data) ? data : []);
+  } catch (err) {
+    console.error("Requests error", err);
+    setRequests([]);
+  }
+};
 
   // --- ACTIONS ---
   const handleAction = async (id, action) => {
@@ -97,7 +114,7 @@ function AdminDashboard() {
   const handleDeleteProduct = async (id) => {
     if (!window.confirm("Are you sure?")) return;
     try {
-      await axios.delete(`${API}/products/${id}`, { headers: { Authorization: token } });
+      const res = await axios.post(`${API}/products`, newProduct,  { headers: { Authorization: token } });
       setProducts(products.filter(p => p._id !== id));
       // Update stats locally
       setStats(prev => ({ ...prev, totalProducts: prev.totalProducts - 1 }));
@@ -378,7 +395,7 @@ function AdminDashboard() {
                         <tr><th className="p-4">Name</th><th className="p-4">Actions</th></tr>
                       </thead>
                       <tbody>
-                        {requests.map(req => (
+                        {Array.isArray(requests) && requests.map(req => (
                           <tr key={req._id} className="border-b">
                             <td className="p-4 font-bold">{req.username}</td>
                             <td className="p-4 flex gap-2">
