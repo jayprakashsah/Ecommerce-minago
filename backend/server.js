@@ -8,8 +8,10 @@ const app = express();
 
 // --- MIDDLEWARE ---
 app.use(express.json());
-app.use(cors());
-
+app.use(cors({
+  origin: "https://ecommerce-minago.vercel.app",
+  credentials: true
+}));
 // --- SERVE IMAGES ---
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
