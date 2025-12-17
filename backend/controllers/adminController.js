@@ -2,6 +2,7 @@ const User = require('../models/User');
 const Product = require('../models/Product');
 const Order = require('../models/Order');
 
+// --- 1. DASHBOARD STATS (Your Existing Logic) ---
 exports.getStats = async (req, res) => {
     try {
         // --- STRICT SEPARATION OF ROLES ---
@@ -77,5 +78,50 @@ exports.getStats = async (req, res) => {
 
     } catch (error) {
         res.status(500).json({ message: error.message });
+    }
+};
+
+// --- 2. GET PENDING SELLER REQUESTS (New) ---
+exports.getSellerRequests = async (req, res) => {
+    try {
+        // Find users who have registered as 'seller' but are NOT verified yet
+        const requests = await User.find({ 
+            role: 'seller', 
+            'businessDetails.isVerified': false 
+        });
+        res.json(requests);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+// --- 3. APPROVE SELLER (New) ---
+exports.approveSeller = async (req, res) => {
+    try {
+        const user = await User.findByIdAndUpdate(
+            req.params.id,
+            { 'businessDetails.isVerified': true },
+            { new: true }
+        );
+        
+        if (!user) return res.status(404).json({ message: "Seller not found" });
+        
+        res.json({ message: "Seller Approved Successfully", user });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+};
+
+// --- 4. REJECT SELLER (New) ---
+exports.rejectSeller = async (req, res) => {
+    try {
+        // We delete the user account if rejected
+        const user = await User.findByIdAndDelete(req.params.id);
+        
+        if (!user) return res.status(404).json({ message: "Seller not found" });
+
+        res.json({ message: "Seller Request Rejected & Account Removed" });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
 };

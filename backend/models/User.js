@@ -3,13 +3,12 @@ const mongoose = require('mongoose');
 const userSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     
-    // --- ADDED THIS FIELD ---
     // sparse: true allows multiple users to have no email (if they registered the old way)
     // unique: true ensures no two people have the same email
     email: { type: String, unique: true, sparse: true }, 
 
     password: { type: String, required: true },
-    role: { type: String, default: 'user' }, // 'user' or 'admin'
+    role: { type: String, default: 'user' }, // 'user', 'admin', or 'seller'
     
     // --- ADMIN / SELLER SPECIFIC ---
     adminType: { 
@@ -21,6 +20,7 @@ const userSchema = new mongoose.Schema({
         businessName: { type: String, default: "" },
         gstNumber: { type: String, default: "" },
         shopAddress: { type: String, default: "" },
+        documentProof: { type: String, default: "" }, // <--- NEW FIELD: Stores ID Proof URL
         isVerified: { type: Boolean, default: false } // Super Admin must verify new sellers
     },
 

@@ -7,6 +7,8 @@ import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
 import ProductCard from './components/ProductCard';
 import Cart from './components/Cart';
+import RegisterSeller from './pages/RegisterSeller';
+<Route path="/register-seller" element={<RegisterSeller />} />
 
 // Import Pages
 import Home from './pages/Home';
@@ -106,7 +108,7 @@ function App() {
 
       <Routes>
         <Route path="/" element={<Home topProducts={products.slice(0,3)} onAddToCart={addToCart} />} />
-        
+        <Route path="/register-seller" element={<RegisterSeller />} />
         <Route path="/products" element={
           <div className="container mx-auto px-6 mt-10 mb-20">
              <h2 className="text-3xl font-bold text-gray-900 mb-8">All Products</h2>
