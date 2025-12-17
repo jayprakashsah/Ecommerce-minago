@@ -6,6 +6,7 @@ import {
   FaHeadset, FaUserEdit, FaBoxOpen, FaShippingFast, FaUndo, FaFileContract, 
   FaUserTie, FaPaperPlane, FaCalendarAlt, FaMoneyBillWave, FaChartLine 
 } from 'react-icons/fa';
+const API = import.meta.env.VITE_API_URL;
 
 function Profile() {
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ function Profile() {
 
   const fetchProfile = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/auth/profile', {
+      const res = await axios.get('${API}/auth/profile', {
         headers: { Authorization: token }
       });
       
@@ -63,7 +64,7 @@ function Profile() {
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/orders/my-orders', { 
+      const res = await axios.get('${API}/orders/my-orders', { 
         headers: { Authorization: token } 
       });
       setOrders(res.data);
@@ -98,7 +99,7 @@ function Profile() {
     try {
       // --- FIX: REMOVED MANUAL 'Content-Type' HEADER ---
       // Axios sets this automatically with the correct boundary for FormData
-      await axios.put('http://localhost:3000/auth/profile', formData, {
+      await axios.put('${API}/auth/profile', formData, {
         headers: { Authorization: token } 
       });
       

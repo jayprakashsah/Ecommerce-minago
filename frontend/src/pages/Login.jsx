@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaUser, FaLock } from 'react-icons/fa';
 
+/* ✅ ONLY ADDITION */
+const API = import.meta.env.VITE_API_URL;
+
 function Login({ onLogin }) {
   const navigate = useNavigate();
   
@@ -18,7 +21,7 @@ function Login({ onLogin }) {
     setError(''); 
 
     const endpoint = isLoginMode ? '/auth/login' : '/auth/register';
-    const url = `http://localhost:3000${endpoint}`;
+    const url = `${API}${endpoint}`;
 
     try {
       // By default, everyone registering here is a 'user'
@@ -74,9 +77,14 @@ function Login({ onLogin }) {
             <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Username</label>
             <div className="relative">
               <FaUser className="absolute left-3 top-3.5 text-gray-400" />
-              <input type="text" value={username} onChange={(e) => setUsername(e.target.value)}
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 transition"
-                placeholder="Enter username" required />
+                placeholder="Enter username"
+                required
+              />
             </div>
           </div>
 
@@ -84,13 +92,21 @@ function Login({ onLogin }) {
             <label className="block text-xs font-bold text-gray-600 uppercase mb-2">Password</label>
             <div className="relative">
               <FaLock className="absolute left-3 top-3.5 text-gray-400" />
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:border-indigo-500 transition"
-                placeholder="Enter password" required />
+                placeholder="Enter password"
+                required
+              />
             </div>
           </div>
 
-          <button type="submit" className="w-full bg-indigo-600 text-white font-bold py-3.5 rounded-xl hover:bg-indigo-700 transition shadow-lg mt-4">
+          <button
+            type="submit"
+            className="w-full bg-indigo-600 text-white font-bold py-3.5 rounded-xl hover:bg-indigo-700 transition shadow-lg mt-4"
+          >
             {isLoginMode ? "Sign In" : "Register"}
           </button>
         </form>

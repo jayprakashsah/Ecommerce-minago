@@ -27,8 +27,7 @@ function Checkout({ cart }) {
     if (checkoutItems.length === 0) {
        // navigate('/'); // Uncomment to force redirect if empty
     }
-    axios.get('http://localhost:3000/auth/profile', { headers: { Authorization: token } })
-      .then(res => {
+ axios.get(`${API}/auth/profile`, { headers: { Authorization: token } })      .then(res => {
         setAddress(res.data.address || '');
         setLoading(false);
       })
@@ -58,7 +57,7 @@ function Checkout({ cart }) {
     if (paymentMethod === 'COD') {
         // --- CASH ON DELIVERY FLOW ---
         try {
-            await axios.post('http://localhost:3000/orders', orderData, { headers: { Authorization: token } });
+await axios.post(`${API}/orders`, orderData, { headers: { Authorization: token } });
             alert("Order Placed Successfully!");
             navigate('/orders');
         } catch (error) {

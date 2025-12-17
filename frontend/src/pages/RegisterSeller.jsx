@@ -24,7 +24,7 @@ function RegisterSeller() {
     if (file) data.append('document', file);
 
     try {
-      await axios.post('http://localhost:3000/auth/register-seller', data);
+      await axios.post('${API}/auth/register-seller', data);
       alert("Application Submitted! The Admin will review your details.");
       navigate('/');
     } catch (err) {

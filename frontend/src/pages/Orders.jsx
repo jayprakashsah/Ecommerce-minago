@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { FaBox, FaCalendarAlt, FaMoneyBillWave, FaArrowRight } from 'react-icons/fa';
+const API = import.meta.env.VITE_API_URL;
 
 function Orders() {
   const [orders, setOrders] = useState([]);
@@ -9,8 +10,8 @@ function Orders() {
 
   useEffect(() => {
     // Fetch logged-in user's orders
-    axios.get('http://localhost:3000/orders/my-orders', { 
-      headers: { Authorization: token } 
+ axios.get(`${API}/orders/my-orders`, { 
+        headers: { Authorization: token } 
     })
     .then(res => {
       setOrders(res.data);

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { FaShoppingCart, FaBolt, FaStar, FaArrowLeft, FaCheckCircle, FaExclamationCircle } from 'react-icons/fa';
+const API = import.meta.env.VITE_API_URL;
 
 function ProductDetails({ onAddToCart }) {
   const { id } = useParams();
@@ -13,7 +14,7 @@ function ProductDetails({ onAddToCart }) {
   const [selectedImage, setSelectedImage] = useState('');
 
   useEffect(() => {
-    axios.get(`http://localhost:3000/products`)
+    axios.get(`${API}/products`)
       .then(res => {
         const found = res.data.find(p => p._id === id);
         setProduct(found);

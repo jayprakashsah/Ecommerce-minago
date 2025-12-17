@@ -11,6 +11,7 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, 
   Tooltip, ResponsiveContainer 
 } from 'recharts';
+const API = import.meta.env.VITE_API_URL;
 
 function AdminDashboard() {
   const token = sessionStorage.getItem("token");
@@ -47,8 +48,8 @@ function AdminDashboard() {
     try {
       // DYNAMIC URL: Admin gets global stats, Seller gets isolated stats
       const url = role === 'admin' 
-        ? 'http://localhost:3000/auth/admin/stats'
-        : 'http://localhost:3000/auth/seller/stats';
+        ? '${API}/auth/admin/stats'
+        : '${API}/auth/seller/stats';
 
       const res = await axios.get(url, { headers: { Authorization: token } });
       setStats(res.data);
@@ -65,8 +66,8 @@ function AdminDashboard() {
     try {
       // DYNAMIC URL: Admin sees all, Seller sees theirs
       const endpoint = role === 'admin' 
-        ? 'http://localhost:3000/products' 
-        : 'http://localhost:3000/products/seller/my-products';
+        ? '${API}/products' 
+        : '${API}/products/seller/my-products';
         
       const res = await axios.get(endpoint, { headers: { Authorization: token } });
       setProducts(res.data);
@@ -75,7 +76,7 @@ function AdminDashboard() {
 
   const fetchRequests = async () => {
     try {
-      const res = await axios.get('http://localhost:3000/auth/admin/seller-requests', { headers: { Authorization: token } });
+      const res = await axios.get('${API}/auth/admin/seller-requests', { headers: { Authorization: token } });
       setRequests(res.data);
     } catch (err) { console.error("Requests error", err); }
   };
@@ -83,8 +84,8 @@ function AdminDashboard() {
   // --- ACTIONS ---
   const handleAction = async (id, action) => {
     const url = action === 'accept' 
-      ? `http://localhost:3000/auth/admin/approve-seller/${id}`
-      : `http://localhost:3000/auth/admin/reject-seller/${id}`;
+      ? `${API}/auth/admin/approve-seller/${id}`
+      : `${API}/auth/admin/reject-seller/${id}`;
     try {
       if(action === 'accept') await axios.put(url, {}, { headers: { Authorization: token } });
       else await axios.delete(url, { headers: { Authorization: token } });
@@ -96,7 +97,7 @@ function AdminDashboard() {
   const handleDeleteProduct = async (id) => {
     if (!window.confirm("Are you sure?")) return;
     try {
-      await axios.delete(`http://localhost:3000/products/${id}`, { headers: { Authorization: token } });
+      await axios.delete(`${API}/products/${id}`, { headers: { Authorization: token } });
       setProducts(products.filter(p => p._id !== id));
       // Update stats locally
       setStats(prev => ({ ...prev, totalProducts: prev.totalProducts - 1 }));
@@ -106,12 +107,12 @@ function AdminDashboard() {
   const handleSaveProduct = async (formData) => {
     try {
       if (editingProduct) {
-        const res = await axios.put(`http://localhost:3000/products/${editingProduct._id}`, formData, { headers: { Authorization: token } });
+        const res = await axios.put(`${API}/products/${editingProduct._id}`, formData, { headers: { Authorization: token } });
         setProducts(products.map(p => p._id === editingProduct._id ? res.data : p));
         setEditingProduct(null);
       } else {
         const newProduct = { ...formData, stars: 5, sale: "Just Added" };
-        const res = await axios.post('http://localhost:3000/products', newProduct, { headers: { Authorization: token } });
+        const res = await axios.post('${API}/products', newProduct, { headers: { Authorization: token } });
         setProducts([...products, res.data]);
         setStats(prev => ({ ...prev, totalProducts: prev.totalProducts + 1 }));
       }
